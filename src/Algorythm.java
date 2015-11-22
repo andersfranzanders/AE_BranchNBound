@@ -117,7 +117,7 @@ public class Algorythm {
 		}
 		return resultsForDay;
 	}
-
+// hahah das is nur ein kommentar =)
 	private int calculateNumberOfPossibleSongs(Hour hour, int slotIndex) {
 
 		int counter = 0;
