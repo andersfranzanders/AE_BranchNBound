@@ -6,15 +6,15 @@ import java.util.List;
 public class Hour {
 
 	String name;
-	List<HourSlot> hourSlots;
+	List<Slot> hourSlots;
 
 	public Hour(String name, List<Category> listOfCategories) {
 		this.name = name;
-		hourSlots = new ArrayList<HourSlot>();
+		hourSlots = new ArrayList<Slot>();
 
 		for (int i = 0; i < listOfCategories.size(); i++) {
 			Category categoryForSlot = listOfCategories.get(i);
-			hourSlots.add(new HourSlot(categoryForSlot));
+			hourSlots.add(new Slot(categoryForSlot));
 		}
 	}
 	
@@ -32,13 +32,13 @@ public class Hour {
 
 
 
-	public List<HourSlot> getHourSlots() {
+	public List<Slot> getHourSlots() {
 		return hourSlots;
 	}
 
 
 
-	public void setHourSlots(List<HourSlot> hourSlots) {
+	public void setHourSlots(List<Slot> hourSlots) {
 		this.hourSlots = hourSlots;
 	}
 

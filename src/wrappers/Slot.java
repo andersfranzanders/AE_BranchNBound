@@ -1,11 +1,11 @@
 package wrappers;
 
-public class HourSlot {
+public class Slot {
 	
 	private Song song;
 	private Category category;
 	
-	public HourSlot(Category category){
+	public Slot(Category category){
 		this.category = category;
 	}
 

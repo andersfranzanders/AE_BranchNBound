@@ -43,7 +43,7 @@ public class Category {
 
 	public String toString() {
 		String s = "";
-		s += "Category: " + name + " | maxSize : " + maxSongs + " | Filled: " + songList.size() + " \n ";
+		s += "Category: " + name + " | maxSize : " + maxSongs + " | Filled: " + songList.size() + " | Rottime: " + maxRot + " \n ";
 		for (Song song : songList) {
 			s += "..." + song.toString() + " \n ";	
 		}
