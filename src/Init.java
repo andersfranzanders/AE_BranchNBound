@@ -17,39 +17,39 @@ import wrappers.Song.Tempo;
 
 public class Init {
 
-	int hoursOfDay = 24;
+	int hoursOfDay = 2;
 
 	public void start() {
 
-		for (int i = 1; i < 11; i++) {
-
-			hoursOfDay = i * 24;
-
-			for (int messrunde = 0; messrunde < 10; messrunde++) {
-				System.gc();
-
-				Day day = buildRandomDay();
-				System.out.println("Begin!");
-
-				Algorythm algo = new Algorythm();
-				long start = System.currentTimeMillis();
-				float violationsPerSlot = algo.planDay(day);
-				long time = System.currentTimeMillis() - start;
-				double timeInS = time * 0.001D;
-				writeTimeToFile(
-						"/Users/franzanders/Documents/HTWK/Master/3. Semester/Algorythm Engineering/Projekt/ersteLaufzeitmessung/ersteLaufzeitmessung_200Songs.txt",
-						timeInS, violationsPerSlot);
-			}
-		}
+		int i = 1;
+		Day day = buildRandomDay(i);
+		System.out.println("Begin!");
+		BranchNBoundAlgo bbAlgo = new BranchNBoundAlgo();
+		Day plannedDay = bbAlgo.planDay(day);
+		
+		
 	}
 
-	private void writeTimeToFile(String fileName, double time, float violations) {
+	private void writeTimeToFile(String fileName, double time, float violations, int i, double[] durchschnitt,
+			int messrunde) {
 		try {
 			File file = new File(fileName);
 			Scanner scanner = new Scanner(file);
 			String contents = scanner.useDelimiter("\\Z").next();
-			contents += " \n Hours Planned:  " + hoursOfDay + " | Time: " + String.valueOf(time)
+			// contents += " \n Hours Planned:  " + hoursOfDay + " | Time: " +
+			// String.valueOf(time)
+			// + " | Violations Per Slot: " + violations;
+			contents += " \n Songs Planned:  " + (i * 20) + " | Time: " + String.valueOf(time)
 					+ " | Violations Per Slot: " + violations;
+			if (messrunde == 9) {
+				double finalDurchschnitt = 0;
+				for (double zahl : durchschnitt) {
+					finalDurchschnitt += zahl;
+				}
+				finalDurchschnitt = finalDurchschnitt / (durchschnitt.length);
+				contents += " \n Durchschnitt der Messreihe: " + finalDurchschnitt;
+			}
+
 			System.out.println(contents);
 			scanner.close();
 
@@ -67,25 +67,20 @@ public class Init {
 
 	}
 
-	private Day buildRandomDay() {
+	private Day buildRandomDay(int round) {
 		// NumberForCats: 4, 16, 30, 40
-		Category powerCat = new Category("Power Cat", 8, 4);
+		Category powerCat = new Category("Power Cat", round * 2, 4);
 		powerCat.fillCategoryWithRandomSongs();
 
-		Category newCat = new Category("New Cat", 32, 6);
+		Category newCat = new Category("New Cat", round * 4, 6);
 		newCat.fillCategoryWithRandomSongs();
 
-		Category ninetiesCat = new Category("90s", 60, 8);
+		Category ninetiesCat = new Category("90s", round * 4, 8);
 		ninetiesCat.fillCategoryWithRandomSongs();
 
-		Category eightiesCat = new Category("80s", 100, 10);
+		Category eightiesCat = new Category("80s", round * 10, 10);
 		eightiesCat.fillCategoryWithRandomSongs();
-
-		// System.out.println(powerCat);
-		// System.out.println(newCat);
-		// System.out.println(ninetiesCat);
-		// System.out.println(eightiesCat);
-
+		
 		Day day = new Day(hoursOfDay);
 
 		for (int i = 0; i < hoursOfDay; i++) {

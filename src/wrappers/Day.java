@@ -7,6 +7,9 @@ public class Day {
 
 	private int hoursOfDay;
 	private List<Hour> listOfHours;
+	public int numberOfSlots = 0;
+	private int totalViolations = 0;
+	
 
 	public Day(int hoursOfDay) {
 		this.hoursOfDay = hoursOfDay;
@@ -49,7 +52,7 @@ public class Day {
 
 	}
 	
-	public int numberOfLosts(){
+	public int calNumberOfSlots(){
 		int counter = 0;
 		for(Hour hour: listOfHours){
 			counter += hour.getHourSlots().size();
@@ -57,4 +60,15 @@ public class Day {
 		return counter;
 	}
 
+	public int getTotalViolations() {
+		return totalViolations;
+	}
+
+	public void setTotalViolations(int totalViolations) {
+		this.totalViolations = totalViolations;
+	}
+	
+	public double getRelativeViolations(){
+		return (double)totalViolations / calNumberOfSlots();
+	}
 }

@@ -12,7 +12,7 @@ import wrappers.Slot;
 import wrappers.Song;
 import wrappers.Tupel;
 
-public class Algorythm {
+public class GreedyAlgo {
 
 	Day day;
 	List<List<Integer>> result;
@@ -22,7 +22,7 @@ public class Algorythm {
 
 		this.day = day;
 
-		int numberOfSlotsToPlan = day.numberOfLosts();
+		int numberOfSlotsToPlan = day.calNumberOfSlots();
 
 		while (numberOfSlotsToPlan != 0) {
 			Tupel slotToPlan = calculateSlotToPlan();
@@ -34,7 +34,7 @@ public class Algorythm {
 		}
 		
 
-		return (float) totalViolations / day.numberOfLosts();
+		return (float) totalViolations / day.calNumberOfSlots();
 
 	}
 
