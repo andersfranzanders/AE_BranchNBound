@@ -22,15 +22,15 @@ public class Init {
 	public void start() {
 
 		int i = 1;
-		Day day = buildRandomDay(i);
-		day.remainingSlots = day.calNumberOfSlots();
+		//Day day = buildRandomDay(i);
+		//day.remainingSlots = day.calNumberOfSlots();
 		System.out.println("Begin!");
-		BranchNBoundAlgo bbAlgo = new BranchNBoundAlgo();
-		
-		//bbAlgo.testComparator();
-		Day plannedDay = bbAlgo.planNextSong(day);
-		System.out.println(plannedDay);
-		
+		//BranchNBoundAlgo bbAlgo = new BranchNBoundAlgo();
+		//GreedyAlgo gAlgo = new GreedyAlgo();
+		//Day plannedDay = gAlgo.planNextSong(day);
+		//System.out.println(plannedDay);
+		Database database = new Database();
+		database.generateDatabase();
 		
 	}
 

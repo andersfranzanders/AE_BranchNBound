@@ -80,6 +80,13 @@ public class Song {
 	}
 
 	static Random random = new Random();
+	
+	
+	public static Song generateSongFromXlsData(){
+		Song song = new Song();
+		return song;
+		
+	}
 
 	public static Song generateRandomSong() {
 

@@ -16,22 +16,18 @@ import wrappers.Tupel;
 
 public class GreedyAlgo {
 
-	public static List<Day> problemNodes = new ArrayList<Day>();
-	public static PriorityQueue<Day> prioQue = new PriorityQueue<Day>(new DayComparator());
 
-	public Day planNextSong(Day _day) {
+	public Day planNextSong(Day day) {
 
-		Day day = Day.deepCopyDay(_day);
+		//Day day = Day.deepCopyDay(_day);
 
 		if (day.remainingSlots == 0) {
-			System.out.println(prioQue);
-
+			
 			return day;
 		} else {
 			Tupel slotToPlan = calculateSlotToPlan(day);
 			setSongOnLocation(day, slotToPlan);
 			day.remainingSlots--;
-			prioQue.add(day);
 			return planNextSong(day);
 
 		}
