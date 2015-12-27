@@ -5,6 +5,8 @@ import java.util.List;
 
 public class Hour {
 
+	//Commentar =)!
+	
 	String name;
 	List<Slot> hourSlots;
 
@@ -16,6 +18,10 @@ public class Hour {
 			Category categoryForSlot = listOfCategories.get(i);
 			hourSlots.add(new Slot(categoryForSlot));
 		}
+	}
+	
+	public Hour(String name){
+		this.name = name;
 	}
 	
 	

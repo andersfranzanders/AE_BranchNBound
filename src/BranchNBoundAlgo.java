@@ -1,59 +1,80 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import wrappers.Category;
 import wrappers.Day;
+import wrappers.DayComparator;
 import wrappers.Hour;
 import wrappers.Slot;
 import wrappers.Song;
 import wrappers.Tupel;
 
-
 public class BranchNBoundAlgo {
 
-	
+	public static List<Day> problemNodes = new ArrayList<Day>();
+	public static PriorityQueue<Day> prioQue = new PriorityQueue<Day>(new DayComparator());
 
-	
-	public Day planDay(Day day) {
+	public Day planNextSong(Day day) {
 
-		day.numberOfSlots = day.calNumberOfSlots();
+		if (day.remainingSlots == 0) {
+			return day;
+		} else {
+			Tupel slotToPlan = calculateSlotToPlan(day);
+			List<Day> newNodes = setSongOnLocation(day, slotToPlan);
 
-//		while (day.numberOfSlots != 0) {
-//			Tupel slotToPlan = calculateSlotToPlan(day);
-//			setSongOnLocation(day, slotToPlan);
-//			day.numberOfSlots--;
-//			
-//		}
-		
-		if(day.numberOfSlots != 0){
-			
+			for (Day newNode : newNodes) {
+				
+				prioQue.add(newNode);
+			}
+
+			printOutInfo(day, newNodes);
+			Day nextNode = prioQue.poll();
+			return planNextSong(nextNode);
+
 		}
-		
-		
-		return day;
 	}
 
-	private void setSongOnLocation(Day day, Tupel slotToPlan) {
-		Slot slot = day.getListOfHours().get(slotToPlan.x).getHourSlots().get(slotToPlan.y);
-		Category cat = slot.getCategory();
-		List<Song> songsOfCat = cat.getSongList();
+	private void printOutInfo(Day day, List<Day> newNodes) {
 
-		List<Integer> violationsList = new ArrayList<Integer>();
-		int minViolations = 99;
-		int index = 0;
-		int minIndex = 0;
-		for (Song song : songsOfCat) {
-			int violations = checkConstraints(day, song, cat, slotToPlan.x, slotToPlan.y);
-			violationsList.add(violations);
-			if (violations < minViolations) {
-				minViolations = violations;
-				minIndex = index;
-			}
-			index++;
-
+		System.out.println(day.remainingSlots + " present Day: ----------------------");
+		System.out.println(day);
+		System.out.println(day.remainingSlots + " New Nodes from here: ------------------");
+		for (Day newNode : newNodes) {
+			System.out.println(newNode);
 		}
-		slot.setSong(songsOfCat.get(minIndex));
-		day.setTotalViolations(day.getTotalViolations() + minViolations);
+		System.out.println(day.remainingSlots + " Next Node To Plan: ----------------------");
+		System.out.println(prioQue.peek());
+		System.out.println(day.remainingSlots + " Currently In the Que: ------------------");
+		System.out.println(prioQue);
+		
+		
+
+	}
+
+	private List<Day> setSongOnLocation(Day oldDay, Tupel slotToPlan) {
+
+		int numSongsOfCat = oldDay.getListOfHours().get(slotToPlan.x).getHourSlots().get(slotToPlan.y).getCategory()
+				.getSongList().size();
+
+		List<Day> nextNodes = new ArrayList<Day>();
+
+		for (int i = 0; i < numSongsOfCat; i++) {
+
+			Day newDay = Day.deepCopyDay(oldDay);
+			Slot slot = newDay.getListOfHours().get(slotToPlan.x).getHourSlots().get(slotToPlan.y);
+			Category cat = slot.getCategory();
+			Song song = cat.getSongList().get(i);
+
+			int violations = checkConstraints(newDay, song, cat, slotToPlan.x, slotToPlan.y);
+			slot.setSong(song);
+			newDay.setTotalViolations(newDay.getTotalViolations() + violations);
+			newDay.remainingSlots--;
+
+			nextNodes.add(newDay);
+		}
+		return nextNodes;
+
 	}
 
 	private int checkConstraints(Day day, Song song, Category cat, int hourIndex, int slotIndex) {
@@ -182,5 +203,16 @@ public class BranchNBoundAlgo {
 		}
 
 		return counter;
+	}
+
+	public void testComparator() {
+		Init init = new Init();
+		Day day1 = init.buildRandomDay(1);
+		Day day2 = init.buildRandomDay(2);
+		day1.setTotalViolations(8);
+		day2.setTotalViolations(7);
+		DayComparator dayComp = new DayComparator();
+		System.out.println(dayComp.compare(day1, day2));
+
 	}
 }

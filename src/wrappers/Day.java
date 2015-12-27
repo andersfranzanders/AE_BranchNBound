@@ -7,9 +7,8 @@ public class Day {
 
 	private int hoursOfDay;
 	private List<Hour> listOfHours;
-	public int numberOfSlots = 0;
+	public int remainingSlots = 0;
 	private int totalViolations = 0;
-	
 
 	public Day(int hoursOfDay) {
 		this.hoursOfDay = hoursOfDay;
@@ -41,6 +40,7 @@ public class Day {
 	public String toString() {
 		String s = "";
 		s += "Planned Day: \n";
+		s += "Total Violations " + this.totalViolations + " \n";
 		int i = 0;
 		for (Hour hour : listOfHours) {
 			s += "hour: " + i + "\n";
@@ -48,13 +48,14 @@ public class Day {
 			s += "\n";
 			i++;
 		}
+		
 		return s;
 
 	}
-	
-	public int calNumberOfSlots(){
+
+	public int calNumberOfSlots() {
 		int counter = 0;
-		for(Hour hour: listOfHours){
+		for (Hour hour : listOfHours) {
 			counter += hour.getHourSlots().size();
 		}
 		return counter;
@@ -67,8 +68,32 @@ public class Day {
 	public void setTotalViolations(int totalViolations) {
 		this.totalViolations = totalViolations;
 	}
-	
-	public double getRelativeViolations(){
-		return (double)totalViolations / calNumberOfSlots();
+
+	public double getRelativeViolations() {
+		return (double) totalViolations / calNumberOfSlots();
+	}
+
+	public static Day deepCopyDay(Day oldDay) {
+
+		Day newDay = new Day(oldDay.getHoursOfDay());
+		newDay.setTotalViolations(oldDay.getTotalViolations());
+		newDay.remainingSlots = oldDay.remainingSlots;
+
+		List<Hour> newListOfHours = new ArrayList<Hour>();
+		for (Hour oldHour : oldDay.getListOfHours()) {
+			
+			List<Slot> newSlotList = new ArrayList<Slot>();
+			for (Slot oldSlot : oldHour.getHourSlots()) {
+				Slot newSlot = new Slot(oldSlot.getCategory());
+				newSlot.setSong(oldSlot.getSong());
+				newSlotList.add(newSlot);
+			}
+			Hour newHour = new Hour(oldHour.getName());
+			newHour.setHourSlots(newSlotList);
+			newListOfHours.add(newHour);
+		}
+		newDay.setListOfHours(newListOfHours);
+
+		return newDay;
 	}
 }
