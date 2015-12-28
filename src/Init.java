@@ -26,12 +26,15 @@ public class Init {
 		//day.remainingSlots = day.calNumberOfSlots();
 		System.out.println("Begin!");
 		BranchNBoundAlgo bbAlgo = new BranchNBoundAlgo();
+		BranchNBoundAlgo2 bbAlgo2 = new BranchNBoundAlgo2();
+		GreedyAlgo gAlgo = new GreedyAlgo();
 		
 		Database database = new Database();
-		Day emptyDay = database.generate80sDay(20);
-		GreedyAlgo gAlgo = new GreedyAlgo();
+		Day emptyDay = database.buildRandomDay(1);
+		//Day emptyDay = database.generate80sDay(15);
+		
 		//Day plannedDay = gAlgo.planNextSong(emptyDay);
-		Day plannedDay = bbAlgo.planNextSong(emptyDay);
+		Day plannedDay = bbAlgo2.planNextSong(emptyDay);
 		System.out.println(plannedDay);
 		
 		

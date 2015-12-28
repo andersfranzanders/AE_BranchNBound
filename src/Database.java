@@ -208,11 +208,11 @@ public class Database {
 			Hour dayHour = generateRandomDayHour(powerCat, newCat, ninetiesCat, eightiesCat);
 			day.addHourToList(dayHour);
 		}
-		System.out.println(powerCat);
-		System.out.println(newCat);
-		System.out.println(ninetiesCat);
-		System.out.println(eightiesCat);
-
+//		System.out.println(powerCat);
+//		System.out.println(newCat);
+//		System.out.println(ninetiesCat);
+//		System.out.println(eightiesCat);
+		day.remainingSlots = day.calNumberOfSlots();
 		return day;
 	}
 
@@ -220,12 +220,12 @@ public class Database {
 		List<Category> categoriesForHour = new ArrayList<Category>();
 		categoriesForHour.add(powerCat);
 		categoriesForHour.add(eightiesCat);
-		// categoriesForHour.add(newCat);
-		// categoriesForHour.add(ninetiesCat);
-		// categoriesForHour.add(eightiesCat);
-		// categoriesForHour.add(newCat);
-		// categoriesForHour.add(eightiesCat);
-		// categoriesForHour.add(ninetiesCat);
+		 categoriesForHour.add(newCat);
+		 categoriesForHour.add(ninetiesCat);
+//		 categoriesForHour.add(eightiesCat);
+//		 categoriesForHour.add(newCat);
+//		 categoriesForHour.add(eightiesCat);
+//		 categoriesForHour.add(ninetiesCat);
 
 		return new Hour("Day Hour", categoriesForHour);
 	}
