@@ -28,7 +28,7 @@ public class BranchNBoundAlgo {
 				prioQue.add(newNode);
 			}
 
-			printOutInfo(day, newNodes);
+			//printOutInfo(day, newNodes);
 			Day nextNode = prioQue.poll();
 			return planNextSong(nextNode);
 
@@ -184,7 +184,7 @@ public class BranchNBoundAlgo {
 			possibilityOverview.add(possibilitiesForHour);
 			hourIndex++;
 		}
-		System.out.println(possibilityOverview);
+		//System.out.println(possibilityOverview);
 		return slotToPlan;
 	}
 
@@ -203,16 +203,5 @@ public class BranchNBoundAlgo {
 		}
 
 		return counter;
-	}
-
-	public void testComparator() {
-		Init init = new Init();
-		Day day1 = init.buildRandomDay(1);
-		Day day2 = init.buildRandomDay(2);
-		day1.setTotalViolations(8);
-		day2.setTotalViolations(7);
-		DayComparator dayComp = new DayComparator();
-		System.out.println(dayComp.compare(day1, day2));
-
 	}
 }

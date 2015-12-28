@@ -2,6 +2,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -10,18 +12,92 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
+import wrappers.Category;
+import wrappers.Day;
+import wrappers.Hour;
+import wrappers.Song;
+
 public class Database {
 	String path = "resources/rotation 80s80s.xlsx";
 
-	public void generateDatabase() {
+	public Day generate80sDay(int hours) {
 
+		Category Acat = new Category("A", 115, 16);
+		Category Bcat = new Category("B", 271, 29);
+		Category Ccat = new Category("C", 89, 59);
+		Category Rcat = new Category("R", 45, (7 * 24) + 6);
+
+		extractSongsAndFillCategories(Acat, Bcat, Ccat, Rcat);
+
+		Day day = new Day(hours);
+		for (int i = 0; i < hours; i++) {
+			if (i % 2 == 0) {
+				Hour aHour = generateHour_A(Acat, Bcat, Ccat);
+				day.addHourToList(aHour);
+			} else {
+				Hour bHour = generateHour_B(Acat, Bcat, Ccat, Rcat);
+				day.addHourToList(bHour);
+			}
+		}
+		//System.out.println(day);
+		day.remainingSlots = day.calNumberOfSlots();
+		return day;
+
+	}
+
+	private Hour generateHour_B(Category Acat, Category Bcat, Category Ccat, Category Rcat) {
+		List<Category> BhourCats = new ArrayList<Category>();
+		BhourCats.add(Bcat);
+		BhourCats.add(Bcat);
+		BhourCats.add(Acat);
+		BhourCats.add(Bcat);
+		BhourCats.add(Ccat);
+		BhourCats.add(Bcat);
+		BhourCats.add(Acat);
+		BhourCats.add(Bcat);
+		BhourCats.add(Bcat);
+		BhourCats.add(Rcat);
+		BhourCats.add(Acat);
+		BhourCats.add(Bcat);
+		BhourCats.add(Bcat);
+		BhourCats.add(Acat);
+		BhourCats.add(Bcat);
+		BhourCats.add(Bcat);
+
+		Hour bHour = new Hour("B Hour", BhourCats);
+		return bHour;
+	}
+
+	private Hour generateHour_A(Category Acat, Category Bcat, Category Ccat) {
+		List<Category> AhourCats = new ArrayList<Category>();
+		AhourCats.add(Bcat);
+		AhourCats.add(Acat);
+		AhourCats.add(Bcat);
+		AhourCats.add(Ccat);
+		AhourCats.add(Bcat);
+		AhourCats.add(Bcat);
+		AhourCats.add(Acat);
+		AhourCats.add(Bcat);
+		AhourCats.add(Ccat);
+		AhourCats.add(Bcat);
+		AhourCats.add(Acat);
+		AhourCats.add(Bcat);
+		AhourCats.add(Bcat);
+		AhourCats.add(Acat);
+		AhourCats.add(Bcat);
+		AhourCats.add(Bcat);
+		Hour aHour = new Hour("A Hour", AhourCats);
+		return aHour;
+	}
+
+	private void extractSongsAndFillCategories(Category Acat, Category Bcat, Category Ccat, Category Rcat) {
 		try {
 			InputStream inp = new FileInputStream(path);
 			Workbook wb = WorkbookFactory.create(inp);
 
 			Sheet sheet = wb.getSheetAt(0);
 
-			for (int rowNum = 1; rowNum < 2; rowNum++) {
+			for (int rowNum = 1; rowNum < 472; rowNum++) {
 
 				Row row = sheet.getRow(rowNum);
 
@@ -35,9 +111,7 @@ public class Database {
 				String gender = "";
 
 				for (int columnNum = 0; columnNum < 12; columnNum++) {
-
 					Cell cell = row.getCell(columnNum);
-
 					if (cell != null) {
 						double numValue = 0;
 						String stringValue = "";
@@ -59,7 +133,7 @@ public class Database {
 							break;
 						case 2:
 							category = stringValue;
-							break;	
+							break;
 						case 5:
 							title = stringValue;
 							break;
@@ -83,6 +157,23 @@ public class Database {
 					}
 				}
 
+				Song song = Song.generateSongFromXls(year, category, title, artist, energy, genre, tempo, gender);
+
+				switch (category) {
+				case "A":
+					Acat.addSong(song);
+					break;
+				case "B":
+					Bcat.addSong(song);
+					break;
+				case "C":
+					Ccat.addSong(song);
+					break;
+				case "R":
+					Rcat.addSong(song);
+					break;
+				}
+
 			}
 
 		} catch (FileNotFoundException e) {
@@ -95,6 +186,47 @@ public class Database {
 
 			e.printStackTrace();
 		}
+	}
 
+	public Day buildRandomDay(int hours) {
+		// NumberForCats: 4, 16, 30, 40
+		Category powerCat = new Category("Power Cat", 2, 4);
+		powerCat.fillCategoryWithRandomSongs();
+
+		Category newCat = new Category("New Cat", 2, 6);
+		newCat.fillCategoryWithRandomSongs();
+
+		Category ninetiesCat = new Category("90s", 2, 6);
+		ninetiesCat.fillCategoryWithRandomSongs();
+
+		Category eightiesCat = new Category("80s", 2, 10);
+		eightiesCat.fillCategoryWithRandomSongs();
+
+		Day day = new Day(hours);
+
+		for (int i = 0; i < hours; i++) {
+			Hour dayHour = generateRandomDayHour(powerCat, newCat, ninetiesCat, eightiesCat);
+			day.addHourToList(dayHour);
+		}
+		System.out.println(powerCat);
+		System.out.println(newCat);
+		System.out.println(ninetiesCat);
+		System.out.println(eightiesCat);
+
+		return day;
+	}
+
+	private Hour generateRandomDayHour(Category powerCat, Category newCat, Category ninetiesCat, Category eightiesCat) {
+		List<Category> categoriesForHour = new ArrayList<Category>();
+		categoriesForHour.add(powerCat);
+		categoriesForHour.add(eightiesCat);
+		// categoriesForHour.add(newCat);
+		// categoriesForHour.add(ninetiesCat);
+		// categoriesForHour.add(eightiesCat);
+		// categoriesForHour.add(newCat);
+		// categoriesForHour.add(eightiesCat);
+		// categoriesForHour.add(ninetiesCat);
+
+		return new Hour("Day Hour", categoriesForHour);
 	}
 }

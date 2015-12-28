@@ -28,6 +28,7 @@ public class GreedyAlgo {
 			Tupel slotToPlan = calculateSlotToPlan(day);
 			setSongOnLocation(day, slotToPlan);
 			day.remainingSlots--;
+			//System.out.println(day);
 			return planNextSong(day);
 
 		}
@@ -39,7 +40,7 @@ public class GreedyAlgo {
 		List<Song> songsOfCat = cat.getSongList();
 
 		List<Integer> violationsList = new ArrayList<Integer>();
-		int minViolations = 99;
+		int minViolations = 999;
 		int index = 0;
 		int minIndex = 0;
 		for (Song song : songsOfCat) {
@@ -156,14 +157,14 @@ public class GreedyAlgo {
 						slotToPlan = new Tupel(hourIndex, slotIndex);
 					}
 				} else {
-					possibilitiesForHour.add(99);
+					possibilitiesForHour.add(999);
 				}
 				slotIndex++;
 			}
 			possibilityOverview.add(possibilitiesForHour);
 			hourIndex++;
 		}
-		System.out.println(possibilityOverview);
+	//	System.out.println(possibilityOverview);
 		return slotToPlan;
 	}
 
@@ -184,14 +185,4 @@ public class GreedyAlgo {
 		return counter;
 	}
 
-	public void testComparator() {
-		Init init = new Init();
-		Day day1 = init.buildRandomDay(1);
-		Day day2 = init.buildRandomDay(2);
-		day1.setTotalViolations(8);
-		day2.setTotalViolations(7);
-		DayComparator dayComp = new DayComparator();
-		System.out.println(dayComp.compare(day1, day2));
-
-	}
 }

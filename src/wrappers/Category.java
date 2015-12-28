@@ -6,8 +6,8 @@ import java.util.List;
 public class Category {
 
 	private String name;
-	int maxSongs;
-	int maxRot;
+	private int maxSongs;
+	private int maxRot;
 	private List<Song> songList = new ArrayList<Song>();
 
 	public Category(String name, int maxSongs, int maxRot) {
@@ -16,6 +16,13 @@ public class Category {
 		this.maxSongs = maxSongs;
 		this.maxRot = maxRot;
 	}
+	
+	public Category(String name, int maxRot) {
+		super();
+		this.name = name;
+		this.maxRot = maxRot;
+	}
+	
 
 	public String getName() {
 		return name;

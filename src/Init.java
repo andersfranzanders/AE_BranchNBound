@@ -25,12 +25,15 @@ public class Init {
 		//Day day = buildRandomDay(i);
 		//day.remainingSlots = day.calNumberOfSlots();
 		System.out.println("Begin!");
-		//BranchNBoundAlgo bbAlgo = new BranchNBoundAlgo();
-		//GreedyAlgo gAlgo = new GreedyAlgo();
-		//Day plannedDay = gAlgo.planNextSong(day);
-		//System.out.println(plannedDay);
+		BranchNBoundAlgo bbAlgo = new BranchNBoundAlgo();
+		
 		Database database = new Database();
-		database.generateDatabase();
+		Day emptyDay = database.generate80sDay(20);
+		GreedyAlgo gAlgo = new GreedyAlgo();
+		//Day plannedDay = gAlgo.planNextSong(emptyDay);
+		Day plannedDay = bbAlgo.planNextSong(emptyDay);
+		System.out.println(plannedDay);
+		
 		
 	}
 
@@ -71,46 +74,6 @@ public class Init {
 
 	}
 
-	public Day buildRandomDay(int round) {
-		// NumberForCats: 4, 16, 30, 40
-		Category powerCat = new Category("Power Cat", round * 2, 4);
-		powerCat.fillCategoryWithRandomSongs();
-
-		Category newCat = new Category("New Cat", round * 2, 6);
-		newCat.fillCategoryWithRandomSongs();
-
-		Category ninetiesCat = new Category("90s", round * 2, 6);
-		ninetiesCat.fillCategoryWithRandomSongs();
-
-		Category eightiesCat = new Category("80s", round * 2, 10);
-		eightiesCat.fillCategoryWithRandomSongs();
-		
-		Day day = new Day(hoursOfDay);
-
-		for (int i = 0; i < hoursOfDay; i++) {
-			Hour dayHour = generateDayHour(powerCat, newCat, ninetiesCat, eightiesCat);
-			day.addHourToList(dayHour);
-		}
-		System.out.println(powerCat);
-		System.out.println(newCat);
-		System.out.println(ninetiesCat);
-		System.out.println(eightiesCat);
-		
-		return day;
-	}
-
-	private Hour generateDayHour(Category powerCat, Category newCat, Category ninetiesCat, Category eightiesCat) {
-		List<Category> categoriesForHour = new ArrayList<Category>();
-		categoriesForHour.add(powerCat);
-		categoriesForHour.add(eightiesCat);
-//		categoriesForHour.add(newCat);
-//		categoriesForHour.add(ninetiesCat);
-//		categoriesForHour.add(eightiesCat);
-//		categoriesForHour.add(newCat);
-//		categoriesForHour.add(eightiesCat);
-//		categoriesForHour.add(ninetiesCat);
-
-		return new Hour("Day Hour", categoriesForHour);
-	}
+	
 
 }
