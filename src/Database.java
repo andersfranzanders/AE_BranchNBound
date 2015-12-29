@@ -190,16 +190,16 @@ public class Database {
 
 	public Day buildRandomDay(int hours) {
 		// NumberForCats: 4, 16, 30, 40
-		Category powerCat = new Category("Power Cat", 2, 4);
+		Category powerCat = new Category("Power Cat", 4, 4);
 		powerCat.fillCategoryWithRandomSongs();
 
-		Category newCat = new Category("New Cat", 2, 6);
+		Category newCat = new Category("New Cat", 10, 6);
 		newCat.fillCategoryWithRandomSongs();
 
-		Category ninetiesCat = new Category("90s", 2, 6);
+		Category ninetiesCat = new Category("90s", 20, 6);
 		ninetiesCat.fillCategoryWithRandomSongs();
 
-		Category eightiesCat = new Category("80s", 2, 10);
+		Category eightiesCat = new Category("80s", 30, 10);
 		eightiesCat.fillCategoryWithRandomSongs();
 
 		Day day = new Day(hours);
@@ -222,10 +222,10 @@ public class Database {
 		categoriesForHour.add(eightiesCat);
 		 categoriesForHour.add(newCat);
 		 categoriesForHour.add(ninetiesCat);
-//		 categoriesForHour.add(eightiesCat);
-//		 categoriesForHour.add(newCat);
-//		 categoriesForHour.add(eightiesCat);
-//		 categoriesForHour.add(ninetiesCat);
+		 categoriesForHour.add(eightiesCat);
+		 categoriesForHour.add(newCat);
+		 categoriesForHour.add(eightiesCat);
+		 categoriesForHour.add(ninetiesCat);
 
 		return new Hour("Day Hour", categoriesForHour);
 	}

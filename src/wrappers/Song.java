@@ -13,9 +13,17 @@ public class Song {
 	public enum Tempo {
 		FAST, MEDIUM, SLOW
 	}
+	public enum Energy{
+		SUICIDE, SAD, NORMAL, HAPPY
+	}
+	public enum Gender{
+		M, W
+	}
 
 	private String name;
+	private Gender gender;
 	private String artist;
+	private Energy energy;
 	private Genre genre;
 	private Tempo tempo;
 	public int score;
@@ -24,13 +32,33 @@ public class Song {
 
 	}
 
-	public Song(String name, String artist, Genre genre, Tempo tempo, int score) {
+	public Song(String name, String artist, Genre genre, Tempo tempo, Energy energy, Gender gender, int score) {
 		super();
 		this.name = name;
 		this.artist = artist;
 		this.genre = genre;
 		this.tempo = tempo;
 		this.score = score;
+		this.energy = energy;
+		this.gender = gender;
+	}
+	
+	
+
+	public Gender getGender() {
+		return gender;
+	}
+
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
+
+	public Energy getEnergy() {
+		return energy;
+	}
+
+	public void setEnergy(Energy energy) {
+		this.energy = energy;
 	}
 
 	public String getName() {
@@ -73,11 +101,23 @@ public class Song {
 		this.score = score;
 	}
 
+	
+
+	
+
+
+
 	@Override
 	public String toString() {
-		return "Song [name=" + name + ", artist=" + artist + ", genre=" + genre + ", tempo=" + tempo + ", score="
-				+ score + "]";
+		return "Song [name=" + name + ", gender=" + gender + ", artist=" + artist + ", energy=" + energy + ", genre="
+				+ genre + ", tempo=" + tempo + ", score=" + score + "]";
 	}
+
+
+
+
+
+
 
 	static Random random = new Random();
 
@@ -87,9 +127,34 @@ public class Song {
 		String songArtist = RandomStringUtils.random(3);
 		Genre songGenre = generateRandomGenre();
 		Tempo songTempo = generateRandomTempo();
+		Energy energy = generateRandomEnergy();
+		Gender gender = generateRandomGender();
 		int songScore = generateRandomScore();
 
-		return new Song(songName, songArtist, songGenre, songTempo, songScore);
+		return new Song(songName, songArtist, songGenre, songTempo, energy, gender, songScore);
+	}
+
+	private static Gender generateRandomGender() {
+		int x = random.nextInt(2);
+		if (x == 0) {
+			return Gender.M;
+		}
+		
+		return Gender.W;
+	}
+
+	private static Energy generateRandomEnergy() {
+		int x = random.nextInt(3);
+		if (x == 0) {
+			return Energy.SAD;
+		}
+		if (x == 1) {
+			return Energy.NORMAL;
+		}
+		if (x == 2) {
+			return Energy.SUICIDE;
+		}
+		return Energy.HAPPY;
 	}
 
 	private static int generateRandomScore() {
@@ -161,10 +226,24 @@ public class Song {
 		default:
 			_tempo = Tempo.FAST;
 		}
-		int _score = generateRandomScore();
+		Energy _energy = Energy.HAPPY;
+		if(energyD == 1){
+			_energy = Energy.SUICIDE;
+		}
+		if(energyD == 2){
+			_energy = Energy.SAD;
+		}
+		if(energyD == 3){
+			_energy = Energy.NORMAL;
+		}
+		Gender _gender = Gender.M;
+		if(genderS.equals("W")){
+			_gender = Gender.W;
+		}
 		
+		int _score = generateRandomScore();
 
-		Song song = new Song(_title, _artist, _genre, _tempo, _score);
+		Song song = new Song(_title, _artist, _genre, _tempo, _energy, _gender,_score);
 
 		return song;
 	}

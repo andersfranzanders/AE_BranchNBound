@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Stack;
 
 import wrappers.Category;
 import wrappers.Day;
@@ -13,8 +14,7 @@ import wrappers.Tupel;
 
 public class BranchNBoundAlgo2 {
 
-	public static List<Day> problemNodes = new ArrayList<Day>();
-	public static PriorityQueue<Day> prioQue = new PriorityQueue<Day>(new DayComparator2());
+	public static Stack<Day> stack = new Stack<Day>();
 	public static Day bestDay = null;
 
 	public Day planNextSong(Day day) {
@@ -27,27 +27,19 @@ public class BranchNBoundAlgo2 {
 			return day;
 		} else {
 			Tupel slotToPlan = calculateSlotToPlan(day);
-			List<Day> newNodes = setSongOnLocation(day, slotToPlan);
+			setSongOnLocation(day, slotToPlan);
 
-			for (Day newNode : newNodes) {
+			try {
+				Day nextNode = stack.pop();
 
-				prioQue.add(newNode);
-
-				if (newNode.remainingSlots < bestDay.remainingSlots) {
-					bestDay = newNode;
-				}
-			}
-
-			//printOutInfo(day, newNodes);
-			Day nextNode = prioQue.poll();
-			if (nextNode != null) {
 				return planNextSong(nextNode);
-			} else {
-				//return bestDay;
+
+			} catch (Exception e) {
+				// return bestDay;
 				System.out.println("best day: ----------");
 				System.out.println(bestDay);
-				 GreedyAlgo greedy = new GreedyAlgo();
-				 return greedy.planNextSong(bestDay);
+				GreedyAlgo greedy = new GreedyAlgo();
+				return greedy.planNextSong(bestDay);
 			}
 
 		}
@@ -63,23 +55,21 @@ public class BranchNBoundAlgo2 {
 		}
 
 		System.out.println(day.remainingSlots + " Currently In the Que: ------------------");
-		System.out.println(prioQue);
+		System.out.println(stack);
 		System.out.println(day.remainingSlots + " Next Node To Plan: ----------------------");
-		System.out.println(prioQue.peek());
+		System.out.println(stack.peek());
 		System.out.println(day.remainingSlots + " Best Day: ----------------------");
 		System.out.println(bestDay);
-		
+
 	}
 
-	private List<Day> setSongOnLocation(Day oldDay, Tupel slotToPlan) {
+	private void setSongOnLocation(Day oldDay, Tupel slotToPlan) {
 
 		Slot slot = oldDay.getListOfHours().get(slotToPlan.x).getHourSlots().get(slotToPlan.y);
 		Category cat = slot.getCategory();
 		List<Song> songsOfCat = cat.getSongList();
 		int numSongsOfCat = oldDay.getListOfHours().get(slotToPlan.x).getHourSlots().get(slotToPlan.y).getCategory()
 				.getSongList().size();
-
-		List<Day> nextNodes = new ArrayList<Day>();
 
 		for (int i = 0; i < numSongsOfCat; i++) {
 			Song song = songsOfCat.get(i);
@@ -93,11 +83,14 @@ public class BranchNBoundAlgo2 {
 				newSlot.setSong(newSong);
 				newDay.setTotalViolations(newDay.getTotalViolations() + violations);
 				newDay.remainingSlots--;
+				stack.push(newDay);
+				if (newDay.remainingSlots < bestDay.remainingSlots) {
+					bestDay = newDay;
+					System.out.println(newDay.remainingSlots);
+				}
 
-				nextNodes.add(newDay);
 			}
 		}
-		return nextNodes;
 
 	}
 
@@ -125,6 +118,12 @@ public class BranchNBoundAlgo2 {
 			if (songBefore.getTempo() == song.getTempo()) {
 				violations++;
 			}
+			if (songBefore.getEnergy() == song.getEnergy()) {
+				violations++;
+			}
+			if (songBefore.getGender() == song.getGender()) {
+				violations++;
+			}
 		}
 		// Check Song after
 		if (songAfter != null) {
@@ -135,6 +134,16 @@ public class BranchNBoundAlgo2 {
 				violations++;
 			}
 			if (songAfter.getTempo() == song.getTempo()) {
+				// System.out.println("song didnt fit!" + song + " --> " +
+				// songAfter);
+				violations++;
+			}
+			if (songAfter.getEnergy() == song.getEnergy()) {
+				// System.out.println("song didnt fit!" + song + " --> " +
+				// songAfter);
+				violations++;
+			}
+			if (songAfter.getGender() == song.getGender()) {
 				// System.out.println("song didnt fit!" + song + " --> " +
 				// songAfter);
 				violations++;
@@ -208,7 +217,7 @@ public class BranchNBoundAlgo2 {
 			possibilityOverview.add(possibilitiesForHour);
 			hourIndex++;
 		}
-		// System.out.println(possibilityOverview);
+	//	System.out.println(possibilityOverview);
 		return slotToPlan;
 	}
 

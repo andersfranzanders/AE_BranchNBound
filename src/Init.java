@@ -30,7 +30,7 @@ public class Init {
 		GreedyAlgo gAlgo = new GreedyAlgo();
 		
 		Database database = new Database();
-		Day emptyDay = database.buildRandomDay(1);
+		Day emptyDay = database.buildRandomDay(4);
 		//Day emptyDay = database.generate80sDay(15);
 		
 		//Day plannedDay = gAlgo.planNextSong(emptyDay);
