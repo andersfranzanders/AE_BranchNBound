@@ -12,48 +12,60 @@ import wrappers.DayComparator;
 import wrappers.Hour;
 import wrappers.Slot;
 import wrappers.Song;
+import wrappers.Tripel;
 import wrappers.Tupel;
 
-public class GreedyAlgo {
-
+public class GreedyAlgo2 {
 
 	public Day planNextSong(Day day) {
-
-		//Day day = Day.deepCopyDay(_day);
-
-		if (day.remainingSlots == 0) {
-			
-			return day;
-		} else {
-			Tupel slotToPlan = calculateSlotToPlan(day);
-			setSongOnLocation(day, slotToPlan);
+		Tripel slotToPlan = calculateSlotToPlan(day);
+		while (day.remainingSlots > 0) {
+			slotToPlan = setSongOnLocation(day, slotToPlan);
 			day.remainingSlots--;
-			return planNextSong(day);
 
 		}
+		return day;
+
 	}
 
-	private void setSongOnLocation(Day day, Tupel slotToPlan) {
-		Slot slot = day.getListOfHours().get(slotToPlan.x).getHourSlots().get(slotToPlan.y);
+	private Tripel setSongOnLocation(Day day, Tripel _tripel) {
+		Slot slot = day.getListOfHours().get(_tripel.getHourIndex()).getHourSlots().get(_tripel.getSlotIndex());
 		Category cat = slot.getCategory();
 		List<Song> songsOfCat = cat.getSongList();
+		Set<Song> songsToConsider = new HashSet<Song>();
 
-		List<Integer> violationsList = new ArrayList<Integer>();
-		int minViolations = 999;
-		int index = 0;
-		int minIndex = 0;
+		int minViolations = Integer.MAX_VALUE;
 		for (Song song : songsOfCat) {
-			int violations = checkConstraints(day, song, cat, slotToPlan.x, slotToPlan.y);
-			violationsList.add(violations);
+			int violations = checkConstraints(day, song, cat, _tripel.getHourIndex(), _tripel.getSlotIndex());
 			if (violations < minViolations) {
 				minViolations = violations;
-				minIndex = index;
+				songsToConsider = new HashSet<Song>();
+				songsToConsider.add(song);
 			}
-			index++;
-
+			if (violations == minViolations) {
+				songsToConsider.add(song);
+			}
 		}
-		slot.setSong(songsOfCat.get(minIndex));
+
+		int lowestZeroViolations = -1;
+		Song songToPlan = null;
+		Tripel bestTripel = null;
+		for (Song song : songsToConsider) {
+			
+			slot.setSong(song);
+			Tripel tripel = calculateSlotToPlan(day);
+			
+			if (tripel.getTotalZeroViolations() > lowestZeroViolations) {
+				songToPlan = song;
+				lowestZeroViolations = tripel.getTotalZeroViolations();
+				bestTripel = tripel;
+			}
+		}
+	
+		slot.setSong(songToPlan);
 		day.setTotalViolations(day.getTotalViolations() + minViolations);
+		
+		return bestTripel;
 	}
 
 	private int checkConstraints(Day day, Song song, Category cat, int hourIndex, int slotIndex) {
@@ -73,8 +85,6 @@ public class GreedyAlgo {
 		if (songBefore != null) {
 			// check genre
 			if (songBefore.getGenre() == song.getGenre()) {
-				// System.out.println("song didnt fit!" + songBefore + " <-- " +
-				// song);
 				violations++;
 			}
 			if (songBefore.getTempo() == song.getTempo()) {
@@ -85,13 +95,9 @@ public class GreedyAlgo {
 		if (songAfter != null) {
 			// check genre
 			if (songAfter.getGenre() == song.getGenre()) {
-				// System.out.println("song didnt fit!" + song + " --> " +
-				// songAfter);
 				violations++;
 			}
 			if (songAfter.getTempo() == song.getTempo()) {
-				// System.out.println("song didnt fit!" + song + " --> " +
-				// songAfter);
 				violations++;
 			}
 		}
@@ -130,14 +136,15 @@ public class GreedyAlgo {
 		return violations;
 	}
 
-	private Tupel calculateSlotToPlan(Day day) {
+	private Tripel calculateSlotToPlan(Day day) {
 
-		Tupel slotToPlan = new Tupel(0, 0);
+		Tripel slotToPlan = new Tripel(0, 0, 0);
 		int currentMin = Integer.MAX_VALUE;
 		ArrayList<List<Integer>> possibilityOverview = new ArrayList<List<Integer>>();
 
 		int hourIndex = 0;
 		List<Hour> listOfHours = day.getListOfHours();
+		int totalZeroViolations = 0;
 
 		for (Hour hour : listOfHours) {
 
@@ -150,28 +157,29 @@ public class GreedyAlgo {
 					Category cat = slot.getCategory();
 					int numberOfPossibleSongs = calculateNumberOfPossibleSongs(day, cat, hourIndex, slotIndex);
 					possibilitiesForHour.add(numberOfPossibleSongs);
-
+					totalZeroViolations += numberOfPossibleSongs;
 					if (numberOfPossibleSongs < currentMin) {
 						currentMin = numberOfPossibleSongs;
-						slotToPlan = new Tupel(hourIndex, slotIndex);
+						slotToPlan = new Tripel(hourIndex, slotIndex, 0);
 					}
 				} else {
-					possibilitiesForHour.add(999);
+					possibilitiesForHour.add(99);
 				}
 				slotIndex++;
 			}
 			possibilityOverview.add(possibilitiesForHour);
 			hourIndex++;
 		}
-	//	System.out.println(possibilityOverview);
+		slotToPlan.setTotalZeroViolations(totalZeroViolations);
+
+		System.out.println(possibilityOverview);
 		return slotToPlan;
 	}
 
 	private int calculateNumberOfPossibleSongs(Day day, Category cat, int hourIndex, int slotIndex) {
 
 		int counter = 0;
-		List<Song> songList = day.getListOfHours().get(hourIndex).getHourSlots().get(slotIndex).getCategory()
-				.getSongList();
+		List<Song> songList = cat.getSongList();
 
 		for (Song song : songList) {
 			int violations = checkConstraints(day, song, cat, hourIndex, slotIndex);

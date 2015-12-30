@@ -12,7 +12,7 @@ import wrappers.Slot;
 import wrappers.Song;
 import wrappers.Tupel;
 
-public class BranchNBoundAlgo2 {
+public class BacktrackingAlgo {
 
 	public static Stack<Day> stack = new Stack<Day>();
 	public static Day bestDay = null;

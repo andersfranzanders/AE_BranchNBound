@@ -1,7 +1,9 @@
 package wrappers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Day {
 
@@ -95,5 +97,24 @@ public class Day {
 		newDay.setListOfHours(newListOfHours);
 
 		return newDay;
+	}
+	public Set<Category> getAllUsedCategories(){
+		Set<Category> setOfCats = new HashSet<Category>();
+		for(Hour hour: listOfHours){
+			for(Slot slot: hour.getHourSlots()){
+				setOfCats.add(slot.getCategory());
+			}
+		}
+		
+		return setOfCats;
+	}
+	
+	
+	public int getDifficultyOfCategory(){
+		
+		
+		
+		
+		return 0;
 	}
 }
