@@ -22,10 +22,15 @@ public class Database {
 
 	public Day generate80sDay(int hours) {
 
-		Category Acat = new Category("A", 115, 16);
-		Category Bcat = new Category("B", 271, 29);
-		Category Ccat = new Category("C", 89, 59);
-		Category Rcat = new Category("R", 45, (7 * 24) + 6);
+		// Category Acat = new Category("A", 115, 16);
+		// Category Bcat = new Category("B", 271, 29);
+		// Category Ccat = new Category("C", 89, 59);
+		// Category Rcat = new Category("R", 45, (7 * 24) + 6);
+
+		Category Acat = new Category("A", 115 / 2, 16);
+		Category Bcat = new Category("B", 271 / 2, 29);
+		Category Ccat = new Category("C", 89 / 2, 59);
+		Category Rcat = new Category("R", 45 / 2, (7 * 24) + 6);
 
 		extractSongsAndFillCategories(Acat, Bcat, Ccat, Rcat);
 
@@ -39,7 +44,11 @@ public class Database {
 				day.addHourToList(bHour);
 			}
 		}
-		//System.out.println(day);
+		// System.out.println(Acat);
+		// System.out.println(Bcat);
+		// System.out.println(Ccat);
+		// System.out.println(Rcat);
+
 		day.remainingSlots = day.calNumberOfSlots();
 		return day;
 
@@ -190,42 +199,61 @@ public class Database {
 
 	public Day buildRandomDay(int hours) {
 		// NumberForCats: 4, 16, 30, 40
-		Category powerCat = new Category("Power Cat", 2, 4);
+		Category powerCat = new Category("Power Cat", 8, 4);
 		powerCat.fillCategoryWithRandomSongs();
 
-		Category newCat = new Category("New Cat", 3, 6);
+		Category newCat = new Category("New Cat", 30, 12);
 		newCat.fillCategoryWithRandomSongs();
 
-		Category ninetiesCat = new Category("90s", 3, 6);
+		Category ninetiesCat = new Category("90s", 60, 14);
 		ninetiesCat.fillCategoryWithRandomSongs();
 
-		Category eightiesCat = new Category("80s", 3, 10);
+		Category eightiesCat = new Category("80s", 60, 14);
 		eightiesCat.fillCategoryWithRandomSongs();
 
+		Category thousandsCat = new Category("200s", 52, 14);
+		thousandsCat.fillCategoryWithRandomSongs();
+		
+		Category recurrentCat = new Category("Recs", 50, 14);
+		recurrentCat.fillCategoryWithRandomSongs();
+		
+		
+		
 		Day day = new Day(hours);
 
 		for (int i = 0; i < hours; i++) {
-			Hour dayHour = generateRandomDayHour(powerCat, newCat, ninetiesCat, eightiesCat);
+			Hour dayHour = generateRandomDayHour(powerCat, newCat, ninetiesCat, eightiesCat, thousandsCat, recurrentCat);
 			day.addHourToList(dayHour);
 		}
-		System.out.println(powerCat);
-		System.out.println(newCat);
-		System.out.println(ninetiesCat);
-		System.out.println(eightiesCat);
+//		System.out.println(powerCat);
+//		System.out.println(newCat);
+//		System.out.println(ninetiesCat);
+//		System.out.println(eightiesCat);
 		day.remainingSlots = day.calNumberOfSlots();
 		return day;
 	}
 
-	private Hour generateRandomDayHour(Category powerCat, Category newCat, Category ninetiesCat, Category eightiesCat) {
+	private Hour generateRandomDayHour(Category powerCat, Category newCat, Category ninetiesCat, Category eightiesCat, Category thousandsCat, Category recurrentCat) {
 		List<Category> categoriesForHour = new ArrayList<Category>();
 		categoriesForHour.add(powerCat);
 		categoriesForHour.add(eightiesCat);
-		 categoriesForHour.add(newCat);
-		 categoriesForHour.add(ninetiesCat);
-//		 categoriesForHour.add(eightiesCat);
-//		 categoriesForHour.add(newCat);
-//		 categoriesForHour.add(eightiesCat);
-//		 categoriesForHour.add(ninetiesCat);
+		categoriesForHour.add(newCat);
+		categoriesForHour.add(ninetiesCat);
+		categoriesForHour.add(recurrentCat);
+		categoriesForHour.add(eightiesCat);
+		categoriesForHour.add(thousandsCat);
+		categoriesForHour.add(ninetiesCat);
+		categoriesForHour.add(powerCat);
+		categoriesForHour.add(eightiesCat);
+		categoriesForHour.add(newCat);
+		categoriesForHour.add(ninetiesCat);
+		categoriesForHour.add(recurrentCat);
+		categoriesForHour.add(eightiesCat);
+		categoriesForHour.add(thousandsCat);
+		categoriesForHour.add(ninetiesCat);
+		
+		
+
 
 		return new Hour("Day Hour", categoriesForHour);
 	}

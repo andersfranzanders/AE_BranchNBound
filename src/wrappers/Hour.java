@@ -50,14 +50,24 @@ public class Hour {
 
 
 
+//	public String toString() {
+//		String s = "";
+//		s += "Name: " + name + " \n ";
+//		for (int i = 0; i < hourSlots.size(); i++) {
+//			s += i + ". Kategorie: " + hourSlots.get(i).getCategory().getName();
+//			if (hourSlots.get(i).getSong() != null) {
+//				s += ". Filled With: " + hourSlots.get(i).getSong().toString();
+//			}
+//			s += " \n ";
+//		}
+//		return s;
+//	}
+	
 	public String toString() {
 		String s = "";
 		s += "Name: " + name + " \n ";
 		for (int i = 0; i < hourSlots.size(); i++) {
-			s += i + ". Kategorie: " + hourSlots.get(i).getCategory().getName();
-			if (hourSlots.get(i).getSong() != null) {
-				s += ". Filled With: " + hourSlots.get(i).getSong().toString();
-			}
+			s+= hourSlots.get(i);
 			s += " \n ";
 		}
 		return s;
