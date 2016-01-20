@@ -3,15 +3,20 @@ package wrappers;
 public class ResultOfMeasurement {
 	
 	public double time;
-	public int numberOfSlots;
-	public double violationsPerSlots;
-	
-	
+	public int largestDomain;
+	public int totalArcs;
+	public double zeroes;
+	public int hours;
 	@Override
 	public String toString() {
-		return "ResultOfMeasurement [time=" + time + ", numberOfSlots=" + numberOfSlots + ", violationsPerSlots="
-				+ violationsPerSlots + "]";
+		return "ResultOfMeasurement [time=" + time + ", largestDomain=" + largestDomain + ", totalArcs=" + totalArcs
+				+ ", zeroes=" + zeroes + ", hours=" + hours + "]";
 	}
+	
+
+	
+	
+	
 	
 	
 

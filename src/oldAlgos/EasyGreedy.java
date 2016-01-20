@@ -1,4 +1,4 @@
-package currentAlgos;
+package oldAlgos;
 
 import wrappers.Category;
 import wrappers.Day;

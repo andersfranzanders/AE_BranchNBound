@@ -16,13 +16,15 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import currentAlgos.EasyGreedy;
-import currentAlgos.GreedyAlgo2;
-import oldAlgos.AC3Algo;
+import currentAlgos.AC3Algo;
+import currentAlgos.GraphGreedy;
+import oldAlgos.AC3AlgoOld;
 import oldAlgos.BacktrackingAlgo;
 import oldAlgos.BranchNBoundAlgo;
+import oldAlgos.EasyGreedy;
 import oldAlgos.EvolutionaryAlgor;
 import oldAlgos.GreedyAlgo;
+import oldAlgos.GreedyAlgo2;
 import wrappers.Category;
 import wrappers.Day;
 import wrappers.Hour;
@@ -33,30 +35,29 @@ import wrappers.Song.Tempo;
 
 public class Init {
 
-	int repetitions = 10;
+	int maxHours = 24;
+	int maxTries = 10;
+	int skipHours = 2;
 
 	public void start() {
 		List<ResultOfMeasurement> results = new ArrayList<ResultOfMeasurement>();
 		Database database = new Database();
-		GreedyAlgo2 gAlgo2 = new GreedyAlgo2();
-		EasyGreedy easyGreedy = new EasyGreedy();
-
-		 for (int hours = 1; hours < 17; hours = hours + 2) {
-		//for (int hours = 1; hours < 18; hours = hours + 4) {
-			for (int rep = 0; rep < repetitions; rep++) {
+		AC3Algo ac3 = new AC3Algo();
+		GraphGreedy gGreedy = new GraphGreedy();
+		for (int hours = 1; hours < maxHours + 1; hours = hours+skipHours) {
+			for (int round = 0; round < maxTries; round++) {
 				System.gc();
 
-				Day emptyDay = database.buildRandomDay(hours);
-				//Day emptyDay = database.generate80sDay(hours);
-				// System.out.println(emptyDay);
+				Day emptyDay = database.generate80sDay(hours);
+				//ac3.initializeDay(emptyDay);
 				long start = System.currentTimeMillis();
-				//Day plannedDay = gAlgo2.planNextSong(emptyDay);
-				Day plannedDay = easyGreedy.planDay(emptyDay);
+				Day plannedDay = gGreedy.planDay(emptyDay);
 				long time = System.currentTimeMillis() - start;
-				bulidResultOfMeasurement(time, results, hours * 16, plannedDay.getTotalViolations());
+				bulidResultOfMeasurement(time, results, plannedDay.getNumOfArcs(), plannedDay.getLargestDomain(), plannedDay.calZeroes(), hours);
 			}
 		}
-		writeOutresultsToXLSX(results, "resources/resultsOfEasyGreedyWithRandomAC.xlsx");
+		System.out.println(results);
+		writeOutresultsToXLSX(results, "resources/greedy02.xlsx");
 
 	}
 
@@ -80,36 +81,55 @@ public class Init {
 		Workbook wb = new XSSFWorkbook();
 		CreationHelper createHelper = wb.getCreationHelper();
 		Sheet sheet = wb.createSheet("new sheet");
-		for (int rowNum = 0; rowNum < results.size(); rowNum++) {
+
+		for (int rowNum = 0; rowNum < maxTries*2 + 5; rowNum++) {
 
 			Row row = sheet.createRow((short) rowNum);
-			for (int cellNum = 0; cellNum < 3; cellNum++) {
+		}
+		int counter = 0;
+		int counter2 = 0;
+
+		for (int cellNum = 0; cellNum < (maxHours / skipHours); cellNum++) {
+
+			for (int rowNum = 0; rowNum < maxTries*2 + 5; rowNum++) {
+
+				Row row = sheet.getRow(rowNum);
 				Cell cell = row.createCell(cellNum);
-				switch (cellNum) {
-				case 0:
-					cell.setCellValue(results.get(rowNum).numberOfSlots);
-					break;
-				case 1:
-					cell.setCellValue(results.get(rowNum).time);
-					break;
-				case 2:
-					cell.setCellValue(results.get(rowNum).violationsPerSlots);
-					break;
+				if (rowNum == 0) {
+					cell.setCellValue(results.get(counter).largestDomain);
 				}
+				if (rowNum == 1) {
+					cell.setCellValue(results.get(counter).totalArcs);
+
+				}
+				if (rowNum == 2) {
+					cell.setCellValue(results.get(counter).hours);
+
+				}
+				if (rowNum > 3 && rowNum < 14) {
+					cell.setCellValue(results.get(counter).time);
+					counter++;
+				}
+				if (rowNum > 14) {
+					cell.setCellValue(results.get(counter2).zeroes);
+					counter2++;
+				}
+				
 
 			}
 		}
 		return wb;
 	}
 
-	private void bulidResultOfMeasurement(long time, List<ResultOfMeasurement> results, int slotLength,
-			int totalViolations) {
+	private void bulidResultOfMeasurement(long time, List<ResultOfMeasurement> results, int numOfArcs, int largestDomain, double zeroes, int hours) {
 		double timeInS = time * 0.001D;
 
 		ResultOfMeasurement result = new ResultOfMeasurement();
 		result.time = timeInS;
-		result.numberOfSlots = slotLength;
-		result.violationsPerSlots = (double) totalViolations / slotLength;
+		result.largestDomain = largestDomain;
+		result.totalArcs = numOfArcs;
+		result.zeroes = zeroes;
+		result.hours = hours;
 		results.add(result);
 		System.out.println(result);
 
@@ -149,6 +169,7 @@ public class Init {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 
 	}
 

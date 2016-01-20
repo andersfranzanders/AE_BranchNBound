@@ -1,10 +1,11 @@
 package wrappers;
 
+import java.io.Serializable;
 import java.util.Random;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
-public class Song {
+public class Song implements Serializable {
 
 	public enum Genre {
 		POP, ROCK, DANCE

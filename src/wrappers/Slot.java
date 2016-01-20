@@ -1,15 +1,17 @@
 package wrappers;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Slot {
+public class Slot implements Serializable{
 	
 	private Song song;
 	private Category category;
 	private int currentViolations = Integer.MAX_VALUE;
 	private List<Song> remainingSongs = new ArrayList<Song>();
+	private List<ConnectedNode> connectedNodes = new ArrayList<ConnectedNode>();
 	
 
 	public Slot(Category category){
@@ -55,12 +57,30 @@ public class Slot {
 		this.remainingSongs = remainingSongs;
 	}
 
+//	@Override
+//	public String toString() {
+//		String s = "Slot [category=" + category.getName() + ", song=" + song  + "]  \n";
+//		s += "Connected Slots: \n";
+//		for(ConnectedNode node: connectedNodes){
+//			s+= "... "+ node + "\n";
+//		}
+//		
+//		return s;
+//	}
 	
-
-
 	@Override
 	public String toString() {
-		return "Slot [category=" + category.getName() + ", song=" + song  + ", currentViolations=" + currentViolations + "]";
+		String s = "Slot [category=" + category.getName() + ", song=" + song  + "] ";
+		
+		return s;
+	}
+
+	public List<ConnectedNode> getConnectedNodes() {
+		return connectedNodes;
+	}
+
+	public void setConnectedNodes(List<ConnectedNode> connectedNodes) {
+		this.connectedNodes = connectedNodes;
 	}
 	
 	

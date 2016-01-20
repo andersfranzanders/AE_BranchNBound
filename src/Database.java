@@ -1,7 +1,10 @@
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,9 +15,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
+import wrappers.Arc;
 import wrappers.Category;
+import wrappers.ConnectedNode;
 import wrappers.Day;
 import wrappers.Hour;
+import wrappers.Slot;
 import wrappers.Song;
 
 public class Database {
@@ -22,15 +28,15 @@ public class Database {
 
 	public Day generate80sDay(int hours) {
 
-		// Category Acat = new Category("A", 115, 16);
-		// Category Bcat = new Category("B", 271, 29);
-		// Category Ccat = new Category("C", 89, 59);
-		// Category Rcat = new Category("R", 45, (7 * 24) + 6);
+		Category Acat = new Category("A", 115, 16);
+		Category Bcat = new Category("B", 271, 29);
+		Category Ccat = new Category("C", 89, 59);
+		Category Rcat = new Category("R", 45, (7 * 24) + 6);
 
-		Category Acat = new Category("A", 115 / 2, 16);
-		Category Bcat = new Category("B", 271 / 2, 29);
-		Category Ccat = new Category("C", 89 / 2, 59);
-		Category Rcat = new Category("R", 45 / 2, (7 * 24) + 6);
+		// Category Acat = new Category("A", 115 / 2, 16);
+		// Category Bcat = new Category("B", 271 / 2, 29);
+		// Category Ccat = new Category("C", 89 / 2, 59);
+		// Category Rcat = new Category("R", 45 / 2, (7 * 24) + 6);
 
 		extractSongsAndFillCategories(Acat, Bcat, Ccat, Rcat);
 
@@ -48,6 +54,8 @@ public class Database {
 		// System.out.println(Bcat);
 		// System.out.println(Ccat);
 		// System.out.println(Rcat);
+		connectAllSlots(day);
+		fillRemainingSongs(day);
 
 		day.remainingSlots = day.calNumberOfSlots();
 		return day;
@@ -199,62 +207,128 @@ public class Database {
 
 	public Day buildRandomDay(int hours) {
 		// NumberForCats: 4, 16, 30, 40
-		Category powerCat = new Category("Power Cat", 8, 4);
+		Category powerCat = new Category("A", 50, 16);
 		powerCat.fillCategoryWithRandomSongs();
 
-		Category newCat = new Category("New Cat", 30, 12);
+		Category newCat = new Category("B", 271, 29);
 		newCat.fillCategoryWithRandomSongs();
 
-		Category ninetiesCat = new Category("90s", 60, 14);
+		Category ninetiesCat = new Category("C", 50, 30);
 		ninetiesCat.fillCategoryWithRandomSongs();
 
-		Category eightiesCat = new Category("80s", 60, 14);
+		Category eightiesCat = new Category("D", 50, 30);
 		eightiesCat.fillCategoryWithRandomSongs();
 
-		Category thousandsCat = new Category("200s", 52, 14);
+		Category thousandsCat = new Category("E", 50, 30);
 		thousandsCat.fillCategoryWithRandomSongs();
-		
-		Category recurrentCat = new Category("Recs", 50, 14);
+
+		Category recurrentCat = new Category("F", 49, 30);
 		recurrentCat.fillCategoryWithRandomSongs();
-		
-		
-		
+
 		Day day = new Day(hours);
 
 		for (int i = 0; i < hours; i++) {
 			Hour dayHour = generateRandomDayHour(powerCat, newCat, ninetiesCat, eightiesCat, thousandsCat, recurrentCat);
 			day.addHourToList(dayHour);
 		}
-//		System.out.println(powerCat);
-//		System.out.println(newCat);
-//		System.out.println(ninetiesCat);
-//		System.out.println(eightiesCat);
+		connectAllSlots(day);
+		fillRemainingSongs(day);
+
+		System.out.println(powerCat);
+		System.out.println(newCat);
+		System.out.println(ninetiesCat);
+		System.out.println(eightiesCat);
 		day.remainingSlots = day.calNumberOfSlots();
 		return day;
 	}
 
-	private Hour generateRandomDayHour(Category powerCat, Category newCat, Category ninetiesCat, Category eightiesCat, Category thousandsCat, Category recurrentCat) {
-		List<Category> categoriesForHour = new ArrayList<Category>();
-		categoriesForHour.add(powerCat);
-		categoriesForHour.add(eightiesCat);
-		categoriesForHour.add(newCat);
-		categoriesForHour.add(ninetiesCat);
-		categoriesForHour.add(recurrentCat);
-		categoriesForHour.add(eightiesCat);
-		categoriesForHour.add(thousandsCat);
-		categoriesForHour.add(ninetiesCat);
-		categoriesForHour.add(powerCat);
-		categoriesForHour.add(eightiesCat);
-		categoriesForHour.add(newCat);
-		categoriesForHour.add(ninetiesCat);
-		categoriesForHour.add(recurrentCat);
-		categoriesForHour.add(eightiesCat);
-		categoriesForHour.add(thousandsCat);
-		categoriesForHour.add(ninetiesCat);
-		
-		
+	private void fillRemainingSongs(Day day) {
 
+		for (Hour hour : day.getListOfHours()) {
+			for (Slot slot : hour.getHourSlots()) {
+				for (Song song : slot.getCategory().getSongList()) {
+					slot.getRemainingSongs().add(song);
+				}
+			}
+		}
+
+	}
+
+	private void connectAllSlots(Day day) {
+
+		for (int hourIndex = 0; hourIndex < day.getListOfHours().size(); hourIndex++) {
+			Hour hour = day.getListOfHours().get(hourIndex);
+			for (int slotIndex = 0; slotIndex < hour.getHourSlots().size(); slotIndex++) {
+				Slot slot = hour.getHourSlots().get(slotIndex);
+
+				if (slotIndex > 0) {
+					ConnectedNode node = new ConnectedNode(hour.getHourSlots().get(slotIndex - 1), 0);
+					slot.getConnectedNodes().add(node);
+				}
+				if (slotIndex < hour.getHourSlots().size() - 1) {
+					ConnectedNode node = new ConnectedNode(hour.getHourSlots().get(slotIndex + 1), 0);
+					slot.getConnectedNodes().add(node);
+				}
+				Category thisCat = slot.getCategory();
+				int rotTime = thisCat.getMaxRot();
+				for (int rotIndex = hourIndex - rotTime; rotIndex <= hourIndex + rotTime; rotIndex++) {
+					if (rotIndex >= 0 && rotIndex < day.getListOfHours().size()) {
+						Hour rotHour = day.getListOfHours().get(rotIndex);
+						for (Slot rotSlot : rotHour.getHourSlots()) {
+							if (rotSlot.getCategory().equals(thisCat) && !rotSlot.equals(slot)) {
+								ConnectedNode node = new ConnectedNode(rotSlot, 1);
+								slot.getConnectedNodes().add(node);
+							}
+						}
+					}
+				}
+
+			}
+		}
+
+	}
+
+	private Hour generateRandomDayHour(Category A, Category B, Category C, Category D,
+			Category E, Category F) {
+		List<Category> categoriesForHour = new ArrayList<Category>();
+		categoriesForHour.add(A);
+		categoriesForHour.add(D);
+		categoriesForHour.add(B);
+		 categoriesForHour.add(C);
+		 categoriesForHour.add(F);
+		 categoriesForHour.add(D);
+		 categoriesForHour.add(E);
+		 categoriesForHour.add(B);
+		 categoriesForHour.add(A);
+		 categoriesForHour.add(B);
+		 categoriesForHour.add(B);
+		 categoriesForHour.add(C);
+		 categoriesForHour.add(F);
+		 categoriesForHour.add(B);
+		 categoriesForHour.add(E);
+		 categoriesForHour.add(B);
 
 		return new Hour("Day Hour", categoriesForHour);
+	}
+
+	public void serializeDay(Day day, String filename) {
+
+		OutputStream fos = null;
+
+		try {
+			fos = new FileOutputStream(filename);
+			ObjectOutputStream o = new ObjectOutputStream(fos);
+			o.writeObject("Today");
+			o.writeObject(day);
+		} catch (IOException e) {
+			System.err.println(e);
+		} finally {
+			try {
+				fos.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 }

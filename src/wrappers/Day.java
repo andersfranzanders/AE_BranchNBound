@@ -1,11 +1,12 @@
 package wrappers;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Day {
+public class Day implements Serializable{
 
 	private int hoursOfDay;
 	private List<Hour> listOfHours;
@@ -258,5 +259,49 @@ public class Day {
 		}
 
 		return violations;
+	}
+
+	public int getNumOfArcs() {
+		int counter = 0;
+		for(Hour hour : listOfHours){
+			for(Slot slot: hour.getHourSlots()){
+				for(ConnectedNode node: slot.getConnectedNodes()){
+					counter++;
+				}
+			}
+			
+		}
+		
+		return counter;
+	}
+
+	public int getLargestDomain() {
+		int maxDomainSize = 0;
+		for(Hour hour : listOfHours){
+			for(Slot slot: hour.getHourSlots()){
+				int domainSize = slot.getCategory().getSongList().size();
+				if(domainSize > maxDomainSize){
+					maxDomainSize = domainSize;
+				}
+			}
+			
+		}
+		
+		
+		return maxDomainSize;
+	}
+	
+	public double calZeroes(){
+		double zeroes = 0;
+		double pos = 0;
+		for(Hour hour: this.getListOfHours()){
+			for(Slot slot: hour.getHourSlots()){
+				pos++;
+				if(slot.getSong() == null){
+					zeroes++;
+				}	
+			}
+		}
+		return zeroes / pos;
 	}
 }

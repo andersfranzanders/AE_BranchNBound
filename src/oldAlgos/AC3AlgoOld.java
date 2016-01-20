@@ -15,7 +15,7 @@ import wrappers.Hour;
 import wrappers.Slot;
 import wrappers.Song;
 
-public class AC3Algo {
+public class AC3AlgoOld {
 
 	Set<Arc> queue = new HashSet<Arc>();
 

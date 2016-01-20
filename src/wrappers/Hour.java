@@ -1,9 +1,10 @@
 package wrappers;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Hour {
+public class Hour implements Serializable{
 
 	//Commentar =)!
 	
@@ -67,7 +68,7 @@ public class Hour {
 		String s = "";
 		s += "Name: " + name + " \n ";
 		for (int i = 0; i < hourSlots.size(); i++) {
-			s+= hourSlots.get(i);
+			s+= hourSlots.get(i).toString();
 			s += " \n ";
 		}
 		return s;
