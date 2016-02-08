@@ -18,13 +18,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import currentAlgos.AC3Algo;
 import currentAlgos.GraphGreedy;
-import oldAlgos.AC3AlgoOld;
-import oldAlgos.BacktrackingAlgo;
-import oldAlgos.BranchNBoundAlgo;
-import oldAlgos.EasyGreedy;
-import oldAlgos.EvolutionaryAlgor;
-import oldAlgos.GreedyAlgo;
-import oldAlgos.GreedyAlgo2;
 import wrappers.Category;
 import wrappers.Day;
 import wrappers.Hour;
@@ -48,16 +41,17 @@ public class Init {
 			for (int round = 0; round < maxTries; round++) {
 				System.gc();
 
-				Day emptyDay = database.generate80sDay(hours);
-				//ac3.initializeDay(emptyDay);
+				//Day emptyDay = database.generate80sDay(hours);
+				Day emptyDay = database.buildDayFromSerialzedCats("resources/RandomCategories.ser", hours);
+				ac3.initializeDay(emptyDay);
 				long start = System.currentTimeMillis();
-				Day plannedDay = gGreedy.planDay(emptyDay);
+				Day plannedDay = ac3.planDay(emptyDay);
 				long time = System.currentTimeMillis() - start;
 				bulidResultOfMeasurement(time, results, plannedDay.getNumOfArcs(), plannedDay.getLargestDomain(), plannedDay.calZeroes(), hours);
 			}
 		}
 		System.out.println(results);
-		writeOutresultsToXLSX(results, "resources/greedy02.xlsx");
+		writeOutresultsToXLSX(results, "resources/ac3WithRandom02.xlsx");
 
 	}
 

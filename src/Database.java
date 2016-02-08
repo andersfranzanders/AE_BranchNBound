@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import wrappers.Arc;
+import wrappers.CatWrapper;
 import wrappers.Category;
 import wrappers.ConnectedNode;
 import wrappers.Day;
@@ -228,7 +230,7 @@ public class Database {
 		Day day = new Day(hours);
 
 		for (int i = 0; i < hours; i++) {
-			Hour dayHour = generateRandomDayHour(powerCat, newCat, ninetiesCat, eightiesCat, thousandsCat, recurrentCat);
+			Hour dayHour = generateRandomDayHour(powerCat, newCat, ninetiesCat);
 			day.addHourToList(dayHour);
 		}
 		connectAllSlots(day);
@@ -288,38 +290,59 @@ public class Database {
 
 	}
 
-	private Hour generateRandomDayHour(Category A, Category B, Category C, Category D,
-			Category E, Category F) {
+	private Hour generateRandomDayHour(Category Acat, Category Bcat, Category Ccat) {
 		List<Category> categoriesForHour = new ArrayList<Category>();
-		categoriesForHour.add(A);
-		categoriesForHour.add(D);
-		categoriesForHour.add(B);
-		 categoriesForHour.add(C);
-		 categoriesForHour.add(F);
-		 categoriesForHour.add(D);
-		 categoriesForHour.add(E);
-		 categoriesForHour.add(B);
-		 categoriesForHour.add(A);
-		 categoriesForHour.add(B);
-		 categoriesForHour.add(B);
-		 categoriesForHour.add(C);
-		 categoriesForHour.add(F);
-		 categoriesForHour.add(B);
-		 categoriesForHour.add(E);
-		 categoriesForHour.add(B);
-
+		categoriesForHour.add(Bcat);
+		categoriesForHour.add(Acat);
+		categoriesForHour.add(Bcat);
+		categoriesForHour.add(Ccat);
+		categoriesForHour.add(Bcat);
+		categoriesForHour.add(Bcat);
+		categoriesForHour.add(Acat);
+		categoriesForHour.add(Bcat);
+		categoriesForHour.add(Ccat);
+		categoriesForHour.add(Bcat);
+		categoriesForHour.add(Acat);
+		categoriesForHour.add(Bcat);
+		categoriesForHour.add(Bcat);
+		categoriesForHour.add(Acat);
+		categoriesForHour.add(Bcat);
+		categoriesForHour.add(Bcat);
 		return new Hour("Day Hour", categoriesForHour);
 	}
 
-	public void serializeDay(Day day, String filename) {
+	public void writeRandomCatsToDrive(String filename) {
+		
+		Category A = new Category("A", 115, 16);
+		A.fillCategoryWithRandomSongs();
+
+		Category B = new Category("B", 271, 29);
+		B.fillCategoryWithRandomSongs();
+
+		Category C = new Category("C", 89, 59);
+		C.fillCategoryWithRandomSongs();
+
+		Category D = new Category("R", 45, (7 * 24) + 6);
+		D.fillCategoryWithRandomSongs();
+
+		CatWrapper wrapper = new CatWrapper();
+		wrapper.A = A;
+		wrapper.B = B;
+		wrapper.C = C;
+		wrapper.D = D;
+
+		serializeCats(wrapper, filename);
+
+	}
+
+	private void serializeCats(CatWrapper wrapper, String filename) {
 
 		OutputStream fos = null;
 
 		try {
 			fos = new FileOutputStream(filename);
 			ObjectOutputStream o = new ObjectOutputStream(fos);
-			o.writeObject("Today");
-			o.writeObject(day);
+			o.writeObject(wrapper);
 		} catch (IOException e) {
 			System.err.println(e);
 		} finally {
@@ -331,4 +354,48 @@ public class Database {
 		}
 
 	}
+
+	public Day buildDayFromSerialzedCats(String fileName, int hours) {
+		
+		CatWrapper catWrapper = deserializeCats(fileName);
+		
+		Day day = new Day(hours);
+
+		for (int i = 0; i < hours; i++) {
+			if (i % 2 == 0) {
+				Hour aHour = generateHour_A(catWrapper.A, catWrapper.B, catWrapper.C);
+				day.addHourToList(aHour);
+			} else {
+				Hour bHour = generateHour_B(catWrapper.A, catWrapper.B, catWrapper.C, catWrapper.D);
+				day.addHourToList(bHour);
+			}
+		}
+		connectAllSlots(day);
+		fillRemainingSongs(day);
+		return day;
+
+	}
+
+	public CatWrapper deserializeCats(String filename) {
+
+		InputStream fis = null;
+
+		try {
+			fis = new FileInputStream(filename);
+
+			ObjectInputStream o = new ObjectInputStream(fis);
+			return (CatWrapper) o.readObject();
+		} catch (IOException e) {
+			System.err.println(e);
+		} catch (ClassNotFoundException e) {
+			System.err.println(e);
+		} finally {
+			try {
+				fis.close();
+			} catch (Exception e) {
+			}
+		}
+		return null;
+	}
+
 }
